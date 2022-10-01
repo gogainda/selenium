@@ -3,14 +3,7 @@
 name: 'CI - Ruby'
 
 on:
-  workflow_dispatch:
-
-  schedule:
-    - cron: '35 9,21 * * *'
-
   push:
-
-  pull_request:
 
 jobs:
   check_workflow:
@@ -101,7 +94,7 @@ jobs:
           java-version: 11
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: truffleruby-head
       - uses: actions/cache@v2
         with:
           path: |
@@ -132,7 +125,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: truffleruby-head
       - uses: actions/cache@v2
         with:
           path: |
@@ -146,28 +139,6 @@ jobs:
         with:
           command: run //rb:docs
 
-  lint:
-    if: ${{ needs.check_workflow.outputs.result == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(toJson(github.event.commits), '[run ruby]') == true }}
-    needs: check_workflow
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/bazel-disk
-            ~/.cache/bazel-repo
-          key: ${{ runner.os }}-bazel-ruby-lint-${{ hashFiles('**/BUILD.bazel') }}
-          restore-keys: |
-            ${{ runner.os }}-bazel-ruby-lint-
-      - uses: ./.github/actions/setup-bazelisk
-      - uses: ./.github/actions/bazel
-        with:
-          command: run //rb:lint
-
   unit-test:
     if: ${{ needs.check_workflow.outputs.result == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(toJson(github.event.commits), '[run ruby]') == true }}
     needs: check_workflow
@@ -175,7 +146,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ '2.7', '3.1' ]
+        ruby: [ '2.7', 'truffleruby-head' ]
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
