@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    if: ${{ needs.check_workflow.outputs.result == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(toJson(github.event.commits), '[run ruby]') == true }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -35,7 +34,6 @@ jobs:
           command: build //rb:${{ matrix.target }}
 
   firefox-test:
-    if: ${{ needs.check_workflow.outputs.result == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(toJson(github.event.commits), '[run ruby]') == true }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -72,7 +70,6 @@ jobs:
           DISPLAY: :99
 
   unit-test:
-    if: ${{ needs.check_workflow.outputs.result == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(toJson(github.event.commits), '[run ruby]') == true }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
